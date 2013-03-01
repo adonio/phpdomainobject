@@ -1,9 +1,9 @@
-<phpunit bootstrap="./test/bootstrap.php">
+<phpunit bootstrap="./tests/bootstrap.php">
     <testsuite name="Application Test Suite">
-        <directory>./test/application</directory>
+        <directory>./tests/application</directory>
     </testsuite>
     <testsuite name="Library Test Suite">
-        <directory>./test/library</directory>
+        <directory>./tests/library</directory>
     </testsuite>
     
     <filter>
