@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>蓝海清关 · 客户门户</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg-page: #f5f7fb;
+        --bg-card: #ffffff;
+        --text-main: #1f2937;
+        --text-subtle: #64748b;
+        --border-soft: rgba(15, 23, 42, 0.08);
+        --shadow-card: 0 30px 80px rgba(15, 23, 42, 0.08);
+        --radius-lg: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: var(--bg-page);
+        color: var(--text-main);
+      }
+
+      .app-shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: linear-gradient(135deg, #0b63ff, #6c5ce7);
+        color: #ffffff;
+        padding: 28px 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 1.7rem;
+        letter-spacing: 0.5px;
+      }
+
+      .header-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .header-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+        display: grid;
+        place-items: center;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .header-info {
+        text-align: right;
+      }
+
+      .header-info strong {
+        display: block;
+        font-size: 1.05rem;
+      }
+
+      .header-info span {
+        font-size: 0.85rem;
+        opacity: 0.85;
+      }
+
+      main {
+        flex: 1;
+        padding: 36px 48px 64px;
+      }
+
+      .app-content {
+        display: grid;
+        gap: 28px;
+      }
+
+      .board-layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      .panel {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
+        padding: 24px;
+      }
+
+      h2 {
+        margin: 0 0 18px;
+        font-size: 1.2rem;
+      }
+
+      .summary-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .summary-card {
+        padding: 18px 20px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.1));
+        display: grid;
+        gap: 6px;
+      }
+
+      .summary-card strong {
+        font-size: 1.8rem;
+        line-height: 1.2;
+      }
+
+      .summary-card span {
+        font-size: 0.85rem;
+        color: #1d4ed8;
+      }
+
+      .summary-card[data-tone="in_transit"] {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(129, 140, 248, 0.14));
+      }
+
+      .summary-card[data-tone="customs"] {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(168, 85, 247, 0.12));
+      }
+
+      .summary-card[data-tone="delivered"] {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.16), rgba(16, 185, 129, 0.1));
+      }
+
+      .summary-card[data-tone="exception"] {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(234, 179, 8, 0.12));
+      }
+
+      .shipment-list {
+        display: grid;
+        gap: 16px;
+      }
+
+      .filter-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.38);
+        color: inherit;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .chip.active {
+        background: rgba(255, 255, 255, 0.92);
+        border-color: rgba(37, 99, 235, 0.35);
+        color: #1d4ed8;
+        box-shadow: 0 10px 26px rgba(37, 99, 235, 0.18);
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        font-size: 0.9rem;
+      }
+
+      .shipment-card {
+        border: 1px solid var(--border-soft);
+        border-radius: 18px;
+        padding: 16px 18px;
+        background: #ffffff;
+        display: grid;
+        gap: 10px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .shipment-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 50px rgba(15, 23, 42, 0.12);
+      }
+
+      .shipment-card.active {
+        border-color: rgba(37, 99, 235, 0.5);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+      }
+
+      .shipment-card header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0;
+        background: none;
+        color: inherit;
+      }
+
+      .shipment-card header h3 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .shipment-meta {
+        font-size: 0.85rem;
+        color: var(--text-subtle);
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        font-weight: 600;
+      }
+
+      .detail-column {
+        display: grid;
+        gap: 24px;
+      }
+
+      .detail-header {
+        display: grid;
+        gap: 20px;
+      }
+
+      .detail-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+      }
+
+      .detail-route {
+        display: grid;
+        gap: 6px;
+      }
+
+      .detail-route strong {
+        font-size: 1.4rem;
+      }
+
+      .progress-meter {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .progress-track {
+        flex: 1;
+        height: 8px;
+        background: rgba(148, 163, 184, 0.3);
+        border-radius: 999px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
+      }
+
+      .detail-kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+      }
+
+      .kpi-card {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.04);
+        display: grid;
+        gap: 4px;
+      }
+
+      .kpi-card span {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-subtle);
+      }
+
+      .kpi-card strong {
+        font-size: 1.05rem;
+      }
+
+      .timeline {
+        position: relative;
+        padding-left: 26px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 9px;
+        top: 4px;
+        bottom: 4px;
+        width: 2px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(37, 99, 235, 0.28), rgba(124, 58, 237, 0.48));
+      }
+
+      .timeline-item {
+        position: relative;
+        padding: 0 0 0 12px;
+        display: grid;
+        gap: 4px;
+      }
+
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -17px;
+        top: 4px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 3px solid #ffffff;
+        background: #2563eb;
+        box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.18);
+      }
+
+      .timeline-item[data-state="done"]::before {
+        background: #16a34a;
+        box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.2);
+      }
+
+      .timeline-item[data-state="current"]::before {
+        background: #7c3aed;
+        box-shadow: 0 0 0 5px rgba(124, 58, 237, 0.22);
+      }
+
+      .timeline-item[data-state="pending"]::before {
+        background: #cbd5f5;
+        box-shadow: 0 0 0 5px rgba(148, 163, 184, 0.18);
+      }
+
+      .timeline-item time {
+        font-size: 0.78rem;
+        color: var(--text-subtle);
+      }
+
+      .timeline-item strong {
+        font-size: 0.95rem;
+      }
+
+      .timeline-item p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #475569;
+      }
+
+      .timeline-empty {
+        color: #94a3b8;
+        font-style: italic;
+      }
+
+      .detail-grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        align-items: stretch;
+      }
+
+      .document-panel {
+        grid-column: 1 / -1;
+        display: grid;
+        gap: 18px;
+      }
+
+      .upload-area {
+        border: 2px dashed rgba(37, 99, 235, 0.35);
+        border-radius: 18px;
+        padding: 20px;
+        display: grid;
+        gap: 14px;
+        justify-items: start;
+        background: rgba(37, 99, 235, 0.05);
+      }
+
+      .upload-area label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #2563eb;
+        color: #ffffff;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .upload-area input[type="file"] {
+        display: none;
+      }
+
+      .upload-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .upload-controls select,
+      .upload-controls input {
+        padding: 9px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        font-size: 0.85rem;
+      }
+
+      .document-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .document-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(15, 23, 42, 0.04);
+        border-radius: 14px;
+        padding: 12px 14px;
+        gap: 12px;
+      }
+
+      .document-info {
+        display: grid;
+        gap: 4px;
+        font-size: 0.85rem;
+      }
+
+      .document-info strong {
+        font-size: 0.95rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .task-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.04);
+      }
+
+      .task-item input[type="checkbox"] {
+        margin-top: 2px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .task-item label {
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .task-item.completed {
+        background: rgba(34, 197, 94, 0.12);
+      }
+
+      .task-item.completed label {
+        color: #15803d;
+        text-decoration: line-through;
+      }
+
+      .activity-feed {
+        display: grid;
+        gap: 14px;
+      }
+
+      .activity-entry {
+        border-left: 4px solid rgba(37, 99, 235, 0.24);
+        padding-left: 12px;
+        display: grid;
+        gap: 4px;
+      }
+
+      .activity-entry time {
+        font-size: 0.75rem;
+        color: var(--text-subtle);
+      }
+
+      .activity-entry strong {
+        font-size: 0.85rem;
+      }
+
+      .map-card {
+        background: radial-gradient(circle at top, rgba(59, 130, 246, 0.18), rgba(37, 99, 235, 0.05));
+        border-radius: 16px;
+        padding: 18px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .map-canvas {
+        position: relative;
+        height: 160px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(203, 213, 225, 0.4), rgba(148, 163, 184, 0.2));
+      }
+
+      .map-grid {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+
+      .map-route {
+        position: absolute;
+        left: 8%;
+        right: 8%;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 6px;
+        background: rgba(15, 23, 42, 0.18);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .map-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #22d3ee, #2563eb);
+      }
+
+      .map-marker {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffffff;
+        border-radius: 999px;
+        padding: 6px 10px;
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.28);
+        font-size: 1rem;
+      }
+
+      .map-footer {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.85rem;
+        color: #334155;
+      }
+
+      footer {
+        text-align: center;
+        padding: 24px 0 36px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 1200px) {
+        .board-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-grid {
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        header {
+          padding: 22px 20px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 16px;
+        }
+
+        main {
+          padding: 24px 20px 48px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header>
+        <div>
+          <h1>蓝海清关 · 客户门户</h1>
+          <div style="opacity: 0.8; font-size: 0.9rem">实时掌握每一票海运清关进度</div>
+        </div>
+        <div class="header-meta">
+          <div class="header-info">
+            <strong>王小明</strong>
+            <span>宁波伟信进出口有限公司</span>
+          </div>
+          <div class="header-avatar">WX</div>
+        </div>
+      </header>
+      <main>
+        <div id="root"></div>
+      </main>
+      <footer>© 2023 蓝海清关科技 · 为中国出口商提供端到端的海运清关协同平台</footer>
+    </div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useEffect, useMemo, useState } = React;
+
+      const statusStyles = {
+        in_transit: {
+          label: "在途运输",
+          color: "#2563eb",
+          background: "rgba(37, 99, 235, 0.14)",
+          icon: "🚢",
+        },
+        customs: {
+          label: "清关处理中",
+          color: "#7c3aed",
+          background: "rgba(124, 58, 237, 0.16)",
+          icon: "🛃",
+        },
+        delivered: {
+          label: "已完成派送",
+          color: "#16a34a",
+          background: "rgba(22, 163, 74, 0.16)",
+          icon: "✅",
+        },
+        exception: {
+          label: "异常提醒",
+          color: "#b45309",
+          background: "rgba(245, 158, 11, 0.2)",
+          icon: "⚠️",
+        },
+      };
+
+      const documentStatusStyles = {
+        已验证: { color: "#16a34a", background: "rgba(22, 163, 74, 0.16)", icon: "📄" },
+        待审核: { color: "#b45309", background: "rgba(245, 158, 11, 0.2)", icon: "⌛" },
+        已驳回: { color: "#dc2626", background: "rgba(248, 113, 113, 0.24)", icon: "✖" },
+      };
+
+      const activityTypeStyles = {
+        tracking: { color: "#2563eb", label: "运输动态", icon: "🛰️" },
+        customs: { color: "#7c3aed", label: "清关动作", icon: "🛃" },
+        document: { color: "#0f766e", label: "文件更新", icon: "📄" },
+        task: { color: "#b45309", label: "任务提醒", icon: "✅" },
+      };
+
+      const shipmentSeed = [
+        {
+          id: "FX987654",
+          reference: "2023-SEA-889",
+          origin: "宁波",
+          destination: "洛杉矶",
+          vessel: "COSCO Universe",
+          container: "CMAU1234567",
+          departure: "2023-09-18",
+          eta: "2023-10-12",
+          incoterm: "FOB",
+          volume: "6 × 40' HQ",
+          status: "customs",
+          statusLabel: "清关资料审核运行",
+          progress: 68,
+          timeline: [
+            {
+              id: "factory",
+              title: "已出厂",
+              description: "工厂装柜完成",
+              time: "2023-09-16 09:40",
+              state: "done",
+            },
+            {
+              id: "depart",
+              title: "离港",
+              description: "宁波港装船离泊",
+              time: "2023-09-18 17:30",
+              state: "done",
+            },
+            {
+              id: "arrive",
+              title: "到港",
+              description: "长滩码头待泊",
+              time: "预计 2023-10-10",
+              state: "current",
+            },
+            {
+              id: "customs",
+              title: "清关",
+              description: "待补充提单正本",
+              time: "等待资料",
+              state: "pending",
+            },
+            {
+              id: "delivery",
+              title: "派送",
+              description: "待安排卡车",
+              time: "预计 2023-10-14",
+              state: "pending",
+            },
+          ],
+          documents: [
+            {
+              id: "doc-invoice",
+              name: "商业发票.pdf",
+              type: "Invoice",
+              uploadedAt: "2023-09-15 14:08",
+              status: "已验证",
+            },
+            {
+              id: "doc-pack",
+              name: "装箱单.pdf",
+              type: "Packing List",
+              uploadedAt: "2023-09-15 14:10",
+              status: "已验证",
+            },
+          ],
+          tasks: [
+            { id: "task-bl", text: "上传海运提单正本", completed: false },
+            { id: "task-duty", text: "确认最终发票金额", completed: true },
+            { id: "task-hts", text: "更新目的港 HTS 编码说明", completed: false },
+          ],
+          activity: [
+            {
+              id: "act-1",
+              time: "09-21 09:30",
+              type: "customs",
+              description: "清关顾问已提交 HS 编码调整申请。",
+            },
+            {
+              id: "act-2",
+              time: "09-20 16:45",
+              type: "document",
+              description: "客户补充了装箱单。",
+            },
+            {
+              id: "act-3",
+              time: "09-18 18:05",
+              type: "tracking",
+              description: "船舶已离开宁波港，航向洛杉矶。",
+            },
+          ],
+          location: {
+            currentPort: "长滩码头",
+            remark: "预计 48 小时内开始卸船",
+            progress: 62,
+          },
+        },
+        {
+          id: "FX123456",
+          reference: "2023-SEA-812",
+          origin: "上海",
+          destination: "纽约",
+          vessel: "Ever Glory",
+          container: "EMCU7654321",
+          departure: "2023-09-07",
+          eta: "2023-09-29",
+          incoterm: "CIF",
+          volume: "4 × 40' HQ",
+          status: "in_transit",
+          statusLabel: "船舶在航",
+          progress: 54,
+          timeline: [
+            {
+              id: "factory",
+              title: "已出厂",
+              description: "供应商完成装柜",
+              time: "2023-09-05 10:05",
+              state: "done",
+            },
+            {
+              id: "depart",
+              title: "离港",
+              description: "上海港离泊",
+              time: "2023-09-07 18:20",
+              state: "done",
+            },
+            {
+              id: "sailing",
+              title: "在途运输",
+              description: "太平洋航段第 16 天",
+              time: "航行中",
+              state: "current",
+            },
+            {
+              id: "arrive",
+              title: "到港",
+              description: "预计 2023-09-27 到达纽约港",
+              time: "预计 2023-09-27",
+              state: "pending",
+            },
+            {
+              id: "customs",
+              title: "清关",
+              description: "待提交最终发票",
+              time: "预计 2023-09-29",
+              state: "pending",
+            },
+          ],
+          documents: [
+            {
+              id: "doc-bl",
+              name: "海运提单草单.pdf",
+              type: "Bill of Lading",
+              uploadedAt: "2023-09-06 11:22",
+              status: "待审核",
+            },
+          ],
+          tasks: [
+            { id: "task-final-invoice", text: "确认最终发票金额", completed: false },
+            { id: "task-tax", text: "提供目的港进口商税号", completed: true },
+          ],
+          activity: [
+            {
+              id: "act-4",
+              time: "09-19 14:10",
+              type: "tracking",
+              description: "船舶抵达巴拿马运河太平洋锚地排队。",
+            },
+            {
+              id: "act-5",
+              time: "09-17 11:20",
+              type: "tracking",
+              description: "天气良好，航速 18 节。",
+            },
+            {
+              id: "act-6",
+              time: "09-15 16:05",
+              type: "task",
+              description: "提醒：请在 9-22 前上传最终发票。",
+            },
+          ],
+          location: {
+            currentPort: "太平洋航段",
+            remark: "预计 9 月 24 日通过巴拿马运河",
+            progress: 48,
+          },
+        },
+        {
+          id: "FX246810",
+          reference: "2023-SEA-921",
+          origin: "青岛",
+          destination: "西雅图",
+          vessel: "MSC Aurora",
+          container: "MSCU9988776",
+          departure: "2023-08-24",
+          eta: "2023-09-18",
+          incoterm: "FOB",
+          volume: "3 × 40' HQ",
+          status: "delivered",
+          statusLabel: "派送完成",
+          progress: 100,
+          timeline: [
+            {
+              id: "factory",
+              title: "已出厂",
+              description: "货物准时离厂",
+              time: "2023-08-22 09:00",
+              state: "done",
+            },
+            {
+              id: "depart",
+              title: "离港",
+              description: "青岛港装船",
+              time: "2023-08-24 15:20",
+              state: "done",
+            },
+            {
+              id: "arrive",
+              title: "到港",
+              description: "西雅图码头卸货完成",
+              time: "2023-09-16 08:30",
+              state: "done",
+            },
+            {
+              id: "customs",
+              title: "清关",
+              description: "顺利放行",
+              time: "2023-09-17 10:15",
+              state: "done",
+            },
+            {
+              id: "delivery",
+              title: "派送",
+              description: "客户签收",
+              time: "2023-09-18 14:00",
+              state: "done",
+            },
+          ],
+          documents: [
+            {
+              id: "doc-poa",
+              name: "到货签收回执.pdf",
+              type: "POD",
+              uploadedAt: "2023-09-18 15:12",
+              status: "已验证",
+            },
+          ],
+          tasks: [
+            { id: "task-rate", text: "填写服务满意度调查", completed: false },
+          ],
+          activity: [
+            {
+              id: "act-7",
+              time: "09-18 14:05",
+              type: "task",
+              description: "派送完成，等待客户反馈。",
+            },
+            {
+              id: "act-8",
+              time: "09-17 10:20",
+              type: "customs",
+              description: "美国海关已放行，安排派送。",
+            },
+          ],
+          location: {
+            currentPort: "客户仓库",
+            remark: "货物已签收，资料备档完成",
+            progress: 100,
+          },
+        },
+        {
+          id: "FX369121",
+          reference: "2023-SEA-955",
+          origin: "深圳",
+          destination: "汉堡",
+          vessel: "Hapag-Lloyd Rhine",
+          container: "HLXU3322114",
+          departure: "2023-09-02",
+          eta: "2023-10-05",
+          incoterm: "DAP",
+          volume: "5 × 20' GP",
+          status: "exception",
+          statusLabel: "海关查验",
+          progress: 42,
+          timeline: [
+            {
+              id: "factory",
+              title: "已出厂",
+              description: "整柜离厂",
+              time: "2023-08-31 19:20",
+              state: "done",
+            },
+            {
+              id: "depart",
+              title: "离港",
+              description: "盐田港装船",
+              time: "2023-09-02 22:40",
+              state: "done",
+            },
+            {
+              id: "customs-cn",
+              title: "中国海关",
+              description: "随机查验完成",
+              time: "2023-09-04 09:50",
+              state: "done",
+            },
+            {
+              id: "arrive",
+              title: "到港",
+              description: "预计 2023-09-30 抵达汉堡",
+              time: "预计 2023-09-30",
+              state: "current",
+            },
+            {
+              id: "customs-de",
+              title: "德国海关",
+              description: "查验资料需补充",
+              time: "准备资料",
+              state: "pending",
+            },
+            {
+              id: "delivery",
+              title: "派送",
+              description: "待确认卡车预约",
+              time: "预计 2023-10-06",
+              state: "pending",
+            },
+          ],
+          documents: [
+            {
+              id: "doc-cert",
+              name: "原产地证书.pdf",
+              type: "CO",
+              uploadedAt: "2023-09-02 12:08",
+              status: "已验证",
+            },
+            {
+              id: "doc-inspect",
+              name: "汉堡海关补料要求.docx",
+              type: "Customs Data",
+              uploadedAt: "2023-09-19 09:32",
+              status: "待审核",
+            },
+          ],
+          tasks: [
+            { id: "task-inspection", text: "补充德国海关查验资料", completed: false },
+            { id: "task-appointment", text: "确认汉堡码头提柜预约", completed: false },
+          ],
+          activity: [
+            {
+              id: "act-9",
+              time: "09-21 17:20",
+              type: "customs",
+              description: "德国海关要求补充成分说明。",
+            },
+            {
+              id: "act-10",
+              time: "09-18 09:05",
+              type: "tracking",
+              description: "船舶进入苏伊士运河北上队列。",
+            },
+          ],
+          location: {
+            currentPort: "苏伊士运河",
+            remark: "待通过后驶往地中海",
+            progress: 38,
+          },
+        },
+      ];
+
+      const filters = [
+        { value: "all", label: "全部" },
+        { value: "in_transit", label: "在途" },
+        { value: "customs", label: "清关" },
+        { value: "delivered", label: "已完成" },
+        { value: "exception", label: "异常" },
+      ];
+
+      const formatTimestamp = (date = new Date()) => {
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        const h = String(date.getHours()).padStart(2, "0");
+        const min = String(date.getMinutes()).padStart(2, "0");
+        return `${m}-${d} ${h}:${min}`;
+      };
+      const StatusBadge = ({ status, text }) => {
+        const meta = statusStyles[status] ?? {
+          label: text ?? status,
+          color: "#334155",
+          background: "rgba(148, 163, 184, 0.24)",
+          icon: "•",
+        };
+        return (
+          <span className="status-badge" style={{ color: meta.color, background: meta.background }}>
+            <span>{meta.icon}</span>
+            {text ?? meta.label}
+          </span>
+        );
+      };
+
+      const SummaryPanel = ({ shipments }) => {
+        const counts = shipments.reduce(
+          (acc, shipment) => {
+            acc.total += 1;
+            acc[shipment.status] = (acc[shipment.status] || 0) + 1;
+            return acc;
+          },
+          { total: 0 }
+        );
+
+        const cards = [
+          { key: "total", label: "全部货运" },
+          { key: "in_transit", label: "在途运输" },
+          { key: "customs", label: "清关处理中" },
+          { key: "delivered", label: "已派送完成" },
+          { key: "exception", label: "异常提醒" },
+        ];
+
+        return (
+          <div className="panel">
+            <h2>货运概况</h2>
+            <div className="summary-grid">
+              {cards.map((card) => (
+                <div key={card.key} className="summary-card" data-tone={card.key}>
+                  <strong>{counts[card.key] ?? 0}</strong>
+                  <span>{card.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      const ShipmentCard = ({ shipment, isActive, onSelect }) => {
+        const currentStep = shipment.timeline.find((item) => item.state === "current");
+        return (
+          <div
+            className={`shipment-card ${isActive ? "active" : ""}`}
+            onClick={() => onSelect(shipment.id)}
+          >
+            <header>
+              <h3>{shipment.id}</h3>
+              <StatusBadge status={shipment.status} text={shipment.statusLabel} />
+            </header>
+            <div className="shipment-meta">
+              {shipment.origin} → {shipment.destination} · 船名 {shipment.vessel}
+            </div>
+            <div className="shipment-meta">
+              ETD {shipment.departure} · ETA {shipment.eta}
+            </div>
+            {currentStep && (
+              <div style={{ fontSize: "0.78rem", color: "#334155" }}>
+                当前节点：{currentStep.title} · {currentStep.description}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const ShipmentList = ({ shipments, selectedId, onSelect, filter, onFilterChange, search, onSearch }) => (
+        <div className="panel shipment-list">
+          <h2>我的货运</h2>
+          <div className="filter-bar">
+            <input
+              className="search-input"
+              value={search}
+              onChange={(event) => onSearch(event.target.value)}
+              placeholder="搜索提单号、目的港或参考号"
+            />
+            <div className="filter-chips">
+              {filters.map((item) => (
+                <button
+                  key={item.value}
+                  type="button"
+                  className={`chip ${filter === item.value ? "active" : ""}`}
+                  onClick={() => onFilterChange(item.value)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {shipments.length === 0 ? (
+            <div style={{ color: "#94a3b8", fontSize: "0.9rem", padding: "12px 0" }}>
+              暂无符合条件的货运记录
+            </div>
+          ) : (
+            shipments.map((shipment) => (
+              <ShipmentCard
+                key={shipment.id}
+                shipment={shipment}
+                isActive={shipment.id === selectedId}
+                onSelect={onSelect}
+              />
+            ))
+          )}
+        </div>
+      );
+
+      const ProgressMeter = ({ progress }) => (
+        <div className="progress-meter">
+          <div className="progress-track">
+            <div className="progress-fill" style={{ width: `${progress}%` }} />
+          </div>
+          <strong style={{ fontSize: "0.95rem" }}>{progress}%</strong>
+        </div>
+      );
+
+      const Timeline = ({ timeline }) => {
+        if (!timeline || timeline.length === 0) {
+          return <div className="timeline-empty">暂无进度信息</div>;
+        }
+
+        return (
+          <div className="timeline">
+            {timeline.map((item) => (
+              <div key={item.id} className="timeline-item" data-state={item.state}>
+                <time>{item.time}</time>
+                <strong>{item.title}</strong>
+                <p>{item.description}</p>
+              </div>
+            ))}
+          </div>
+        );
+      };
+
+      const DetailHeader = ({ shipment }) => {
+        if (!shipment) {
+          return (
+            <div className="panel" style={{ minHeight: 260, display: "grid", placeItems: "center" }}>
+              <div style={{ color: "#94a3b8" }}>请选择一票货运以查看详情</div>
+            </div>
+          );
+        }
+
+        return (
+          <div className="panel detail-header">
+            <div className="detail-header-top">
+              <div className="detail-route">
+                <span style={{ fontSize: "0.85rem", color: "#475569" }}>提单号 · {shipment.reference}</span>
+                <strong>
+                  {shipment.origin} → {shipment.destination}
+                </strong>
+                <div style={{ color: "#475569", fontSize: "0.9rem" }}>
+                  船名 {shipment.vessel} · 集装箱 {shipment.container}
+                </div>
+              </div>
+              <StatusBadge status={shipment.status} text={shipment.statusLabel} />
+            </div>
+            <ProgressMeter progress={shipment.progress} />
+            <div className="detail-kpis">
+              <div className="kpi-card">
+                <span>出发港 ETD</span>
+                <strong>{shipment.departure}</strong>
+              </div>
+              <div className="kpi-card">
+                <span>到港 ETA</span>
+                <strong>{shipment.eta}</strong>
+              </div>
+              <div className="kpi-card">
+                <span>贸易条款</span>
+                <strong>{shipment.incoterm}</strong>
+              </div>
+              <div className="kpi-card">
+                <span>货量</span>
+                <strong>{shipment.volume}</strong>
+              </div>
+            </div>
+            <Timeline timeline={shipment.timeline} />
+          </div>
+        );
+      };
+
+      const DocumentStatus = ({ status }) => {
+        const meta = documentStatusStyles[status] ?? {
+          color: "#475569",
+          background: "rgba(148, 163, 184, 0.2)",
+          icon: "📄",
+        };
+        return (
+          <span className="pill" style={{ color: meta.color, background: meta.background }}>
+            <span>{meta.icon}</span>
+            {status}
+          </span>
+        );
+      };
+      const DocumentCenter = ({ shipment, onUpload }) => {
+        const [selectedType, setSelectedType] = useState("Bill of Lading");
+        const [description, setDescription] = useState("");
+
+        useEffect(() => {
+          setSelectedType("Bill of Lading");
+          setDescription("");
+        }, [shipment?.id]);
+
+        if (!shipment) {
+          return (
+            <section className="panel document-panel">
+              <h2>文件中心</h2>
+              <div style={{ color: "#94a3b8" }}>请选择货运后即可上传或查看资料</div>
+            </section>
+          );
+        }
+
+        const handleUpload = (event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          const doc = {
+            id: `doc-${Date.now()}`,
+            name: file.name,
+            type: selectedType,
+            uploadedAt: formatTimestamp(),
+            status: "待审核",
+            description,
+          };
+          onUpload(doc);
+          event.target.value = "";
+          setDescription("");
+        };
+
+        return (
+          <section className="panel document-panel">
+            <h2>文件中心</h2>
+            <div className="upload-area">
+              <div style={{ fontSize: "0.9rem", color: "#475569" }}>
+                支持文件类型：PDF、JPG、PNG、XLSX，单个文件不超过 25MB。
+              </div>
+              <div className="upload-controls">
+                <select value={selectedType} onChange={(event) => setSelectedType(event.target.value)}>
+                  <option value="Bill of Lading">海运提单</option>
+                  <option value="Invoice">商业发票</option>
+                  <option value="Packing List">装箱单</option>
+                  <option value="Customs Data">报关资料</option>
+                  <option value="Other">其他</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="备注说明（选填）"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                />
+              </div>
+              <label htmlFor="upload-input">
+                <span>📤</span>
+                上传文件
+              </label>
+              <input
+                id="upload-input"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,.xls,.xlsx"
+                onChange={handleUpload}
+              />
+              <div style={{ color: "#64748b", fontSize: "0.8rem" }}>
+                上传后将由清关顾问审核，并推送进度提醒。
+              </div>
+            </div>
+
+            <div className="document-list">
+              {shipment.documents.length === 0 ? (
+                <div style={{ color: "#94a3b8" }}>尚未上传任何文件</div>
+              ) : (
+                shipment.documents.map((doc) => (
+                  <div key={doc.id} className="document-item">
+                    <div className="document-info">
+                      <strong>{doc.name}</strong>
+                      <span>
+                        {doc.type} · {doc.uploadedAt}
+                      </span>
+                      {doc.description && <span>备注：{doc.description}</span>}
+                    </div>
+                    <DocumentStatus status={doc.status} />
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        );
+      };
+
+      const TaskChecklist = ({ shipment, onToggle }) => {
+        if (!shipment) {
+          return (
+            <section className="panel">
+              <h2>协作任务</h2>
+              <div style={{ color: "#94a3b8" }}>请选择货运后查看协作事项</div>
+            </section>
+          );
+        }
+
+        return (
+          <section className="panel">
+            <h2>协作任务</h2>
+            <div className="task-list">
+              {shipment.tasks.length === 0 ? (
+                <div style={{ color: "#94a3b8" }}>当前暂无待办事项</div>
+              ) : (
+                shipment.tasks.map((task) => (
+                  <div key={task.id} className={`task-item ${task.completed ? "completed" : ""}`}>
+                    <input
+                      id={`task-${task.id}`}
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={() => onToggle(task.id)}
+                    />
+                    <label htmlFor={`task-${task.id}`}>{task.text}</label>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        );
+      };
+
+      const ActivityFeed = ({ shipment }) => {
+        if (!shipment) {
+          return (
+            <section className="panel">
+              <h2>进展播报</h2>
+              <div style={{ color: "#94a3b8" }}>选择货运后可查看最近动态</div>
+            </section>
+          );
+        }
+
+        return (
+          <section className="panel">
+            <h2>进展播报</h2>
+            <div className="activity-feed">
+              {shipment.activity.length === 0 ? (
+                <div style={{ color: "#94a3b8" }}>暂无更新</div>
+              ) : (
+                shipment.activity.map((entry) => {
+                  const meta = activityTypeStyles[entry.type] ?? {
+                    color: "#475569",
+                    icon: "•",
+                    label: "动态",
+                  };
+                  return (
+                    <div key={entry.id} className="activity-entry" style={{ borderLeftColor: meta.color }}>
+                      <time>{entry.time}</time>
+                      <strong>
+                        <span style={{ marginRight: 6 }}>{meta.icon}</span>
+                        {meta.label}
+                      </strong>
+                      <div style={{ fontSize: "0.9rem" }}>{entry.description}</div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </section>
+        );
+      };
+
+      const TrackingPanel = ({ shipment }) => {
+        if (!shipment) {
+          return (
+            <section className="panel">
+              <h2>实时轨迹</h2>
+              <div style={{ color: "#94a3b8" }}>选择货运后展示最新轨迹</div>
+            </section>
+          );
+        }
+
+        const progress = Math.min(
+          Math.max(shipment.location?.progress ?? shipment.progress ?? 0, 6),
+          94
+        );
+
+        return (
+          <section className="panel">
+            <h2>实时轨迹</h2>
+            <div className="map-card">
+              <div className="map-canvas">
+                <div className="map-grid"></div>
+                <div className="map-route">
+                  <div
+                    className="map-progress"
+                    style={{ width: `${shipment.location?.progress ?? shipment.progress ?? 0}%` }}
+                  />
+                </div>
+                <div className="map-marker" style={{ left: `${progress}%` }}>🚢</div>
+              </div>
+              <div className="map-footer">
+                <div>当前位置：{shipment.location?.currentPort ?? "待更新"}</div>
+                <div>{shipment.location?.remark ?? "团队正持续同步航线进展"}</div>
+              </div>
+            </div>
+          </section>
+        );
+      };
+      const App = () => {
+        const [shipments, setShipments] = useState(shipmentSeed);
+        const [selectedId, setSelectedId] = useState(shipmentSeed[0]?.id ?? null);
+        const [filter, setFilter] = useState("all");
+        const [search, setSearch] = useState("");
+
+        const filtered = useMemo(() => {
+          return shipments.filter((shipment) => {
+            const matchFilter = filter === "all" ? true : shipment.status === filter;
+            const term = search.trim().toLowerCase();
+            const matchSearch = term
+              ? [shipment.id, shipment.reference, shipment.destination, shipment.origin]
+                  .filter(Boolean)
+                  .some((value) => value.toLowerCase().includes(term))
+              : true;
+            return matchFilter && matchSearch;
+          });
+        }, [shipments, filter, search]);
+
+        useEffect(() => {
+          if (filtered.length === 0) {
+            setSelectedId(null);
+            return;
+          }
+          const existsInFiltered = filtered.some((shipment) => shipment.id === selectedId);
+          if (!existsInFiltered) {
+            setSelectedId(filtered[0].id);
+          }
+        }, [filtered, selectedId]);
+
+        const selectedShipment = useMemo(
+          () => shipments.find((shipment) => shipment.id === selectedId) ?? null,
+          [shipments, selectedId]
+        );
+
+        const handleUpload = (doc) => {
+          if (!selectedId) return;
+          setShipments((prev) =>
+            prev.map((shipment) => {
+              if (shipment.id !== selectedId) return shipment;
+              return {
+                ...shipment,
+                documents: [doc, ...shipment.documents],
+                activity: [
+                  {
+                    id: `activity-${Date.now()}`,
+                    time: formatTimestamp(),
+                    type: "document",
+                    description: `您上传了 ${doc.name}`,
+                  },
+                  ...shipment.activity,
+                ],
+              };
+            })
+          );
+        };
+
+        const handleToggleTask = (taskId) => {
+          if (!selectedId) return;
+          setShipments((prev) =>
+            prev.map((shipment) => {
+              if (shipment.id !== selectedId) return shipment;
+              const target = shipment.tasks.find((task) => task.id === taskId);
+              const updatedTasks = shipment.tasks.map((task) =>
+                task.id === taskId ? { ...task, completed: !task.completed } : task
+              );
+              const activityEntry = target
+                ? {
+                    id: `activity-${Date.now()}`,
+                    time: formatTimestamp(),
+                    type: "task",
+                    description: `${target.completed ? "已重新开启" : "已完成"}：${target.text}`,
+                  }
+                : null;
+              return {
+                ...shipment,
+                tasks: updatedTasks,
+                activity: activityEntry ? [activityEntry, ...shipment.activity] : shipment.activity,
+              };
+            })
+          );
+        };
+
+        return (
+          <div className="app-content">
+            <SummaryPanel shipments={shipments} />
+            <div className="board-layout">
+              <ShipmentList
+                shipments={filtered}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                filter={filter}
+                onFilterChange={setFilter}
+                search={search}
+                onSearch={setSearch}
+              />
+              <div className="detail-column">
+                <DetailHeader shipment={selectedShipment} />
+                <div className="detail-grid">
+                  <DocumentCenter shipment={selectedShipment} onUpload={handleUpload} />
+                  <TrackingPanel shipment={selectedShipment} />
+                  <TaskChecklist shipment={selectedShipment} onToggle={handleToggleTask} />
+                  <ActivityFeed shipment={selectedShipment} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
